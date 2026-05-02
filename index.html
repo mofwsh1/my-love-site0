@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>حكايتنا ❤️</title>
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap');
+
+body {
+    margin: 0;
+    font-family: 'Cairo', Arial, sans-serif;
+    background: #fff0f5;
+    overflow: hidden;
+}
+
+/* 🔐 LOGIN */
+#login {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(#fff0f5, #ffe4ec);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
+
+/* 📄 PAGES */
+.page {
+    display: none;
+    text-align: center;
+    padding: 20px;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: all 0.8s ease;
+}
+
+.page.active {
+    display: block;
+    opacity: 1;
+    transform: translateY(0);
+}
+
+h1 {
+    color: #ff4d6d;
+}
+
+/* 🔘 BUTTONS */
+.btn {
+    padding: 15px 25px;
+    border: none;
+    border-radius: 15px;
+    font-size: 18px;
+    cursor: pointer;
+    margin: 10px;
+}
+
+#yes { background: #ff4d6d; color: white; }
+#no { background: #eee; }
+
+/* 🖼️ IMAGE */
+#storyImg {
+    width: 80%;
+    max-width: 300px;
+    border-radius: 20px;
+    margin-bottom: 15px;
+    opacity: 0;
+    transform: scale(0.9);
+    transition: all 0.6s ease;
+}
+
+#storyImg.show {
+    opacity: 1;
+    transform: scale(1);
+}
+
+/* 💌 TEXT BOX */
+.box {
+    background: white;
+    padding: 20px;
+    border-radius: 20px;
+    min-height: 120px;
+    box-shadow: 0 0 20px rgba(255,77,109,0.2);
+    animation: pop 0.5s ease;
+}
+
+@keyframes pop {
+    0% { transform: scale(0.8); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+/* 🔥 عداد الأيام الجديد */
+.counter-box {
+    background: linear-gradient(45deg, #ff6b9d, #ff8fab);
+    color: white;
+    padding: 25px;
+    border-radius: 25px;
+    margin: 20px auto;
+    max-width: 320px;
+    box-shadow: 0 15px 35px rgba(255,107,157,0.4);
+    animation: pulse 2s infinite;
+    border: 3px solid rgba(255,255,255,0.3);
+}
+
+@keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.03); }
+}
+
+.days {
+    font-size: 55px;
+    font-weight: bold;
+    margin: 15px 0;
+    text-shadow: 3px 3px 6px rgba(0,0,0,0.3);
+    background: rgba(255,255,255,0.2);
+    padding: 10px 20px;
+    border-radius: 20px;
+    display: inline-block;
+}
+
+.date {
+    font-size: 20px;
+    opacity: 0.95;
+    margin: 10px 0;
+    font-weight: 500;
+}
+
+/* ❤️ HEARTS */
+.heart {
+    position: fixed;
+    bottom: -10px;
+    color: #ff4d6d;
+    animation: float 4s linear forwards;
+    font-size: 20px;
+}
+
+@keyframes float {
+    to { transform: translateY(-110vh); opacity: 0; }
+}
+
+/* موبايل */
+@media (max-width: 480px) {
+    .btn { padding: 20px 35px; font-size: 20px; }
+    #storyImg { width: 95%; }
+    .days { font-size: 45px; }
+}
+</style>
+</head>
+
+<body>
+
+<!-- 🔐 LOGIN -->
+<div id="login">
+    <h2>🔐 ادخل الباسورد</h2>
+    <input id="pass" type="password" placeholder="••••••">
+    <button onclick="check()">دخول</button>
+</div>
+
+<!-- 🎵 MUSIC -->
+<audio id="music" loop>
+    <source src="song.mp3" type="audio/mpeg">
+</audio>
+
+<!-- 💖 PAGE 1 -->
+<div class="page active" id="p1">
+    <h1>بحبك ❤️ وإنتي؟</h1>
+
+    <button class="btn" id="yes" onclick="start()">بحبك</button>
+    <button class="btn" id="no" onmouseover="move()">لا 😭</button>
+</div>
+
+<!-- 💖 PAGE 2 مع العداد -->
+<div class="page" id="p2">
+    <h1>💖 حكايتنا</h1>
+    
+    <!-- 🔥 عداد الأيام -->
+    <div class="counter-box">
+        <h3>❤️ مع بعض من</h3>
+        <div id="daysCount" class="days">0</div>
+        <div id="dateCount" class="date">بتحسب...</div>
+        <h3>يوم 💕</h3>
+    </div>
+
+    <img id="storyImg" src="img1.jpg">
+
+    <div class="box" id="story"></div>
+
+    <button class="btn" onclick="nextText()">اللي بعده ❤️</button>
+</div>
+
+<script>
+
+let texts = [
+"دي مش مجرد بداية... دي حكاية قلبين ❤️",
+"من أول لحظة شوفتك فيها، وأنا مش زي الأول 🤍",
+"كل يوم بيعدي، حبك بيكبر جوايا 💖",
+"إنتي مش شخص... إنتي حياة كاملة ❤️",
+"لو العمر يتعاد، هختارك نفس الاختيار 🤍"
+];
+
+let images = [
+"img1.jpg",
+"img2.jpg",
+"img3.jpg"
+];
+
+let i = 0;
+
+// 🔥 تاريخ أول يوم حب - غيّره هنا
+const loveStartDate = new Date('2021-12-11'); // 2/7/2024
+
+/* 🔐 PASSWORD */
+function check() {
+    let pass = document.getElementById("pass").value;
+    if(pass === "1234"){
+        document.getElementById("login").style.display = "none";
+        document.getElementById("music").play();
+    } else {
+        alert("❌ غلط");
+    }
+}
+
+/* عداد الأيام */
+function updateCounter() {
+    const now = new Date();
+    const diffTime = now - loveStartDate;
+    const days = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+    
+    document.getElementById('daysCount').textContent = days;
+    document.getElementById('dateCount').textContent = 
+        loveStartDate.toLocaleDateString('ar-EG');
+}
+
+// تشغيل العداد
+setInterval(updateCounter, 1000);
+updateCounter();
+
+/* 💖 START */
+function start() {
+    document.getElementById("p1").classList.remove("active");
+    document.getElementById("p2").classList.add("active");
+    type(texts[0]);
+}
+
+/* ✍️ TYPE + IMAGE */
+function type(text){
+    let el = document.getElementById("story");
+    el.innerHTML = "";
+
+    let img = document.getElementById("storyImg");
+
+    if(img){
+        img.classList.remove("show");
+        setTimeout(() => {
+            img.src = images[i] || "img1.jpg";
+            img.classList.add("show");
+        }, 200);
+    }
+
+    let j = 0;
+    let t = setInterval(() => {
+        el.innerHTML += text[j];
+        j++;
+        if(j >= text.length) clearInterval(t);
+    }, 40);
+}
+
+/* NEXT */
+function nextText(){
+    i++;
+    if(i < texts.length){
+        type(texts[i]);
+    } else {
+        type("💌 النهاية... بس حبك ملوش نهاية ❤️");
+    }
+}
+
+/* MOVE NO BUTTON */
+function move(){
+    let btn = document.getElementById("no");
+    btn.style.position = "absolute";
+    btn.style.left = Math.random()*80 + "vw";
+    btn.style.top = Math.random()*80 + "vh";
+}
+
+/* ❤️ HEARTS */
+setInterval(() => {
+    let h = document.createElement("div");
+    h.classList.add("heart");
+    h.innerHTML = "❤️";
+    h.style.left = Math.random()*100 + "vw";
+    document.body.appendChild(h);
+    setTimeout(()=>h.remove(),4000);
+}, 400);
+
+</script>
+
+</body>
+</html>
